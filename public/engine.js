@@ -100,13 +100,16 @@
       }
       for (const r of regs) siblings[r] = (siblings[r] || 0) + 1;
     };
-    for (let attempt = 0; attempt < 2 && !names.size; attempt++) {
+    // crt.sh often returns 502 under load (its error pages carry no CORS header, so a browser
+    // reports "Failed to fetch"); back off before falling back to Cert Spotter, which only
+    // lists current certificates.
+    for (let attempt = 0; attempt < 4 && !names.size; attempt++) {
       try {
-        log(`crt.sh: querying %.${root}` + (attempt ? " (retry)" : ""));
+        log(`crt.sh: querying %.${root}` + (attempt ? ` (retry ${attempt} of 3)` : ""));
         const rows = await getJSON(`https://crt.sh/?q=%25.${root}&output=json`, 90000);
         for (const r of rows) take(String(r.name_value).split("\n"));
         log(`crt.sh: ${rows.length} certificates, ${names.size} names under ${root}`, "ok");
-      } catch (e) { log(`crt.sh: ${e.message || "failed"}`, "warn"); await sleep(3000); }
+      } catch (e) { log(`crt.sh: ${e.message || "failed"}`, "warn"); if (attempt < 3) await sleep([4000, 10000, 20000][attempt]); }
     }
     if (!names.size) {
       try {
@@ -118,7 +121,7 @@
           for (const r of rows) take(r.dns_names || []);
           after = "&after=" + rows[rows.length - 1].id;
         }
-        log(`certspotter: ${names.size} names under ${root}`, names.size ? "ok" : "warn");
+        log(`certspotter: ${names.size} names under ${root} (current certificates only; expect fewer than crt.sh)`, "warn");
       } catch (e) { log(`certspotter: ${e.message || "failed"}`, "warn"); }
     }
     let source = "live";
