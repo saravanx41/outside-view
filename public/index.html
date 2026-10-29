@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Outside View</title>
+<meta name="description" content="Passive external attack surface console: CT logs, DNS, ASN, RDAP and email posture, written up in the Task A report structure.">
+<meta name="robots" content="noindex,nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https:; img-src 'self' data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="asm-api" content="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="bar">
+  <div class="bar-in">
+    <a class="mark" href="#summary" aria-label="Outside View home">
+      <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="16" cy="16" r="6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-dasharray="3 3"/><circle cx="16" cy="16" r="1.8" fill="currentColor"/></svg>
+      <span>Outside View</span>
+    </a>
+    <form id="scan" class="scan" autocomplete="off">
+      <label for="domain" class="sr">Domain to assess</label>
+      <span class="prompt" aria-hidden="true">$ recon</span>
+      <input id="domain" name="domain" value="bowtie.com.hk" spellcheck="false" inputmode="url" placeholder="bowtie.com.hk">
+      <button id="run" type="submit" class="btn primary">Run passive scan</button>
+      <button id="snap" type="button" class="btn">29 Oct snapshot</button>
+    </form>
+    <span class="roe" title="CT logs, DNS over HTTPS, ASN, RDAP and WHOIS. One GET to apex, www, app, api and security.txt. No port scans, brute force or logins.">Passive only</span>
+  </div>
+  <details class="more" id="more">
+    <summary>Scope options</summary>
+    <div class="more-in">
+      <label for="siblings">Other domains you can attribute (CT and DNS)</label>
+      <input id="siblings" placeholder="example.hk, example-group.com" spellcheck="false">
+      <label for="related">Related domains (DNS only, no CT expansion)</label>
+      <input id="related" placeholder="example-japan.com" spellcheck="false">
+      <p class="hint">bowtie.com.hk loads the agreed Task A scope automatically. Results never include personal data: email SANs and WHOIS contacts are dropped at collection.</p>
+    </div>
+  </details>
+</header>
+
+<section class="console" id="console-wrap" aria-label="Collection console">
+  <div class="console-head">
+    <span class="dot" id="state-dot"></span>
+    <span id="state">Ready</span>
+    <span class="grow"></span>
+    <button id="toggle-console" class="link" type="button" aria-expanded="true" aria-controls="console">Hide log</button>
+  </div>
+  <pre id="console" class="log" tabindex="0"></pre>
+</section>
+
+<div class="banner" id="banner" hidden></div>
+
+<div class="layout">
+  <nav class="toc" aria-label="Report sections">
+    <a href="#summary">1. Summary and method</a>
+    <a href="#domains">2. Domains</a>
+    <a href="#vendors">3. SaaS and vendors</a>
+    <a href="#email">4. Email posture</a>
+    <a href="#edge">5. Edge protections</a>
+    <a href="#risks">6. Top 5 risks</a>
+    <a href="#limits">7. Limits and authorisation</a>
+    <a href="#appendix">Appendix: hosts</a>
+    <a href="#export">Export and script</a>
+  </nav>
+  <main id="report" class="report"></main>
+</div>
+
+<footer class="foot">Passive reconnaissance only. Sources: crt.sh, Cert Spotter, Google and Cloudflare DNS over HTTPS, Team Cymru, AWS ip-ranges, RDAP, HKIRC WHOIS, hstspreload.org. Built for the Bowtie Task A take-home.</footer>
+
+<script src="engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
